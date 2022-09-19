@@ -27,6 +27,9 @@ void UTutorialGameInstance::Init()
 			//Bind Delegates Here
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UTutorialGameInstance::OnCreateSessionComplete);
 
+			SessionInterface->OnCancelFindSessionsCompleteDelegates.AddUObject(this, &UTutorialGameInstance::OnFindSessionComplete);
+
+
 		}
 
 	}
@@ -40,6 +43,18 @@ void UTutorialGameInstance::OnCreateSessionComplete(FName ServerName, bool Succe
 	if (Succeeded)
 	{
 		GetWorld()->ServerTravel("/Game/FirstPersonCPP/Maps/FirstPersonExampleMap?listen");
+	}
+
+}
+
+void UTutorialGameInstance::OnFindSessionComplete(bool Succeeded)
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnFindSessionComplete, Succeeded: %d"), Succeeded);
+	if(Succeeded)
+	{
+		TArray<FOnlineSessionSearchResult> SearchResults = SessionSearch->SearchResults;
+		UE_LOG(LogTemp, Warning, TEXT("SearchResults, Server Count: %d"), SearchResults.Num());
+
 	}
 
 }
@@ -63,4 +78,19 @@ void UTutorialGameInstance::CreateServer()
 
 void UTutorialGameInstance::JoinServer()
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("JoinServer"));
+
+
+
+	SessionSearch = MakeShareable(new FOnlineSessionSearch());
+	SessionSearch->bIsLanQuery = true; //Is LAN
+	SessionSearch->MaxSearchResults = 10000;
+	SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+
+
+
+	SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
+
+
 }

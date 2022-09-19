@@ -24,12 +24,15 @@ public:
 protected:
 	IOnlineSessionPtr SessionInterface;
 
+	TSharedPtr<FOnlineSessionSearch> SessionSearch;
+
 
 protected:
 	virtual void Init() override;
 
 	virtual void OnCreateSessionComplete(FName ServerName, bool Succeeded);
 	
+	virtual void OnFindSessionComplete(bool Succeeded);
 protected:
 	UFUNCTION(BlueprintCallable)
 		void CreateServer();
