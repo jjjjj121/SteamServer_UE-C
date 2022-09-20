@@ -44,10 +44,13 @@ void UTutorialGameInstance::Init()
 void UTutorialGameInstance::OnCreateSessionComplete(FName ServerName, bool Succeeded)
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnCreateSessionComplete, Succeeded: %d"), Succeeded);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("OnCreateSessionComplete, Succeeded: %d"), Succeeded);
 
 	if (Succeeded)
 	{
 		GetWorld()->ServerTravel("/Game/FirstPersonCPP/Maps/FirstPersonExampleMap?listen");
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Succeeded Create Session"));
+
 	}
 
 }
@@ -94,6 +97,7 @@ void UTutorialGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSess
 void UTutorialGameInstance::CreateServer()
 {
 	UE_LOG(LogTemp, Warning, TEXT("CreateServer"));
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("CreateServer"));
 
 	FOnlineSessionSettings SessionSettings;
 	SessionSettings.bAllowJoinInProgress = true;
@@ -115,7 +119,7 @@ void UTutorialGameInstance::JoinServer()
 {
 
 	UE_LOG(LogTemp, Warning, TEXT("JoinServer"));
-
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("JoinServer"));
 
 
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
