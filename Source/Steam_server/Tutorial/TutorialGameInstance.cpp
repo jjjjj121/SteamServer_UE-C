@@ -98,7 +98,11 @@ void UTutorialGameInstance::CreateServer()
 	FOnlineSessionSettings SessionSettings;
 	SessionSettings.bAllowJoinInProgress = true;
 	SessionSettings.bIsDedicated = false;
-	SessionSettings.bIsLANMatch = true;
+	if (IOnlineSubsystem::Get()->GetSubsystemName() != "NULL")
+		SessionSettings.bIsLANMatch = false;
+	else
+		SessionSettings.bIsLANMatch = true; //Is LAN
+
 	SessionSettings.bShouldAdvertise = true;
 	SessionSettings.bUsesPresence = true;
 	SessionSettings.NumPublicConnections = 5;
@@ -115,7 +119,10 @@ void UTutorialGameInstance::JoinServer()
 
 
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
-	SessionSearch->bIsLanQuery = true; //Is LAN
+	if (IOnlineSubsystem::Get()->GetSubsystemName() != "NULL")
+		SessionSearch->bIsLanQuery = false; 
+	else
+		SessionSearch->bIsLanQuery = true; //Is LAN
 	SessionSearch->MaxSearchResults = 10000;
 	SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 
