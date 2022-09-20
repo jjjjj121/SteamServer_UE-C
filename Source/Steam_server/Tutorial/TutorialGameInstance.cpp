@@ -4,6 +4,7 @@
 #include "Steam_server/Tutorial/TutorialGameInstance.h"
 
 #include "Engine/World.h"
+#include "Kismet/GameplayStatics.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
 
@@ -27,15 +28,19 @@ void UTutorialGameInstance::Init()
 			//Bind Delegates Here
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UTutorialGameInstance::OnCreateSessionComplete);
 
-			SessionInterface->OnCancelFindSessionsCompleteDelegates.AddUObject(this, &UTutorialGameInstance::OnFindSessionComplete);
+			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UTutorialGameInstance::OnFindSessionComplete);
+			
+			SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UTutorialGameInstance::OnJoinSessionComplete);
 
+
+			UE_LOG(LogTemp, Warning, TEXT("Bind Delegates"));
 
 		}
 
 	}
 
 }
-
+	 
 void UTutorialGameInstance::OnCreateSessionComplete(FName ServerName, bool Succeeded)
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnCreateSessionComplete, Succeeded: %d"), Succeeded);
@@ -53,9 +58,35 @@ void UTutorialGameInstance::OnFindSessionComplete(bool Succeeded)
 	if(Succeeded)
 	{
 		TArray<FOnlineSessionSearchResult> SearchResults = SessionSearch->SearchResults;
+
 		UE_LOG(LogTemp, Warning, TEXT("SearchResults, Server Count: %d"), SearchResults.Num());
 
+		if (SearchResults.Num())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Joining Server"));
+			SessionInterface->JoinSession(0, "My Session", SearchResults[0]);
+
+		}
+
+
 	}
+}
+
+void UTutorialGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnJoinSessionComplete, SessionName: %s"), *SessionName.ToString());
+
+	if (APlayerController* PController = UGameplayStatics::GetPlayerController(GetWorld(), 0))
+	{
+		FString JoinAddress = "";
+		SessionInterface->GetResolvedConnectString(SessionName, JoinAddress);
+		if (JoinAddress != "")
+		{
+			PController->ClientTravel(JoinAddress, ETravelType::TRAVEL_Absolute);
+		}
+		
+	}
+
 
 }
 

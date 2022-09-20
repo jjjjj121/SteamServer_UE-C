@@ -10,6 +10,7 @@
 /**
  * 
  */
+
 UCLASS()
 class STEAM_SERVER_API UTutorialGameInstance : public UGameInstance
 {
@@ -33,6 +34,9 @@ protected:
 	virtual void OnCreateSessionComplete(FName ServerName, bool Succeeded);
 	
 	virtual void OnFindSessionComplete(bool Succeeded);
+
+	virtual void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+
 protected:
 	UFUNCTION(BlueprintCallable)
 		void CreateServer();
